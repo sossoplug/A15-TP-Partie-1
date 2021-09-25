@@ -26,7 +26,7 @@ import net.sf.json.JSONObject;
  *
  * @author mac
  */
-@Path("clients")
+@Path("martin/clients")
 public class ClientsOperations {
 
     @Context
@@ -90,7 +90,7 @@ public class ClientsOperations {
     public String selectSingleClient(@PathParam("id") int clientid){
         
         JSONObject singleClient = new JSONObject();
-        singleClient.accumulate("Status", "Error");
+        singleClient.accumulate("Statut", "Erreur");
         singleClient.accumulate("Message", "Employee id not exists");
         
         try{
@@ -138,8 +138,8 @@ public class ClientsOperations {
         
         
         JSONObject reponse = new JSONObject();
-        reponse.accumulate("Status", "Error");
-        reponse.accumulate("Message", "Insertion échoué");
+        reponse.accumulate("Statut", "Erreur");
+        reponse.accumulate("Message", "Insertion échouée");
         reponse.clear();
         
         
@@ -154,8 +154,8 @@ public class ClientsOperations {
             int rows = stm.executeUpdate();
             
             if (rows > 0) {
-                reponse.accumulate("Status", "OK");
-                reponse.accumulate("Message", "Insertion réussi");
+                reponse.accumulate("Statut", "OK");
+                reponse.accumulate("Message", "Insertion réussie");
             }
             stm.close();
             cn.close();
@@ -176,8 +176,8 @@ public class ClientsOperations {
         
         
         JSONObject reponse = new JSONObject();
-        reponse.accumulate("Status", "Error");
-        reponse.accumulate("Message", "Modification échoué");
+        reponse.accumulate("Statut", "Erreur");
+        reponse.accumulate("Message", "Modification échouée");
         reponse.clear();
         
         
@@ -192,8 +192,8 @@ public class ClientsOperations {
             int rows = stm.executeUpdate();
             
             if (rows > 0) {
-                reponse.accumulate("Status", "OK");
-                reponse.accumulate("Message", "Modification réussi");
+                reponse.accumulate("Statut", "OK");
+                reponse.accumulate("Message", "Modification réussie");
             }
             stm.close();
             cn.close();
@@ -212,8 +212,8 @@ public class ClientsOperations {
     public String deleteIntoClients(@PathParam("id") int clientid){
     
         JSONObject reponse = new JSONObject();
-        reponse.accumulate("Status", "Error");
-        reponse.accumulate("Message", "Suppression échoué");
+        reponse.accumulate("Statut", "Erreur");
+        reponse.accumulate("Message", "Suppression échouée");
         reponse.clear();
         
         
@@ -227,8 +227,8 @@ public class ClientsOperations {
             int rows = stm.executeUpdate();
             
             if (rows > 0) {
-                reponse.accumulate("Status", "OK");
-                reponse.accumulate("Message", "Suppression réussi");
+                reponse.accumulate("Statut", "OK");
+                reponse.accumulate("Message", "Suppression réussie");
             }
             stm.close();
             cn.close();
@@ -242,5 +242,5 @@ public class ClientsOperations {
     }
     
     
-    //String sql = "delete  from clients where clientidutilisateur = ? ";
+   
 }
