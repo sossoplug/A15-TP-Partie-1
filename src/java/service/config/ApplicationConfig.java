@@ -11,7 +11,7 @@ import java.util.Set;
  *
  * @author mac
  */
-@javax.ws.rs.ApplicationPath("martin")
+@javax.ws.rs.ApplicationPath("webresources")
 public class ApplicationConfig extends javax.ws.rs.core.Application {
 
     @Override
@@ -28,6 +28,7 @@ public class ApplicationConfig extends javax.ws.rs.core.Application {
      * If required, comment out calling this method in getClasses().
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
+        resources.add(service.config.ArtisteOperations.class);
         resources.add(service.config.ClientsOperations.class);
     }
     
