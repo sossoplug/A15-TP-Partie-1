@@ -78,6 +78,7 @@ public class CommandeOperations {
     @Produces(javax.ws.rs.core.MediaType.APPLICATION_JSON)
     public String updateCommandes(@PathParam("id") int idCommande,
             @PathParam("prix") double prixCommande){
+        
         JSONObject reponse = new JSONObject();
         reponse.accumulate("Status", "Error");
         reponse.accumulate("Message", "Modification échoué");
@@ -111,48 +112,48 @@ public class CommandeOperations {
     
     @GET
     @Path("allOrders")
-    @Produces(MediaType.APPLICATION_JSON)
-    public String selectAllCommandes() {
+    @Produces(javax.ws.rs.core.MediaType.APPLICATION_JSON)
+    public String selectAllOrders() {
+
         JSONArray mainJSON = new JSONArray();
-        
-        try{
+
+        try {
             Connection cn = utils.DBOperation.connectionBd();
-            
+
             Statement stm = cn.createStatement();
             String sql = "select * from commande";
             ResultSet rs = stm.executeQuery(sql);
-            
+
             JSONObject cmd = new JSONObject();
-            
-            int idCommande;
-            double prixCommande ;
-            Date dateAchat;
+
+            int noCommande;
+            double prixCommande;
+            String dateAchat;
             int idClient;
-            
+
             while (rs.next()) {
 
-                idCommande = rs.getInt("nocommande");
+                noCommande = rs.getInt("nocommande");
                 prixCommande = rs.getDouble("prix");
-                dateAchat = rs.getDate("dateachat");
+                dateAchat = rs.getString("dateachat");
                 idClient = rs.getInt("clientid");
-                
-                cmd.accumulate("id", idCommande);
-                cmd.accumulate("prix", prixCommande);
-                cmd.accumulate("date", dateAchat);
-                cmd.accumulate("idClient", idClient);
-                
+
+                cmd.accumulate("No Commande", noCommande);
+                cmd.accumulate("Prix", prixCommande);
+                cmd.accumulate("Date achat", dateAchat);
+                cmd.accumulate("ID client", idClient);
+
                 mainJSON.add(cmd);
                 cmd.clear();
-                
+
             }
             rs.close();
             stm.close();
             cn.close();
-        }
-        catch(SQLException e) {
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        
+
         return mainJSON.toString();
     }
     
@@ -176,14 +177,14 @@ public class CommandeOperations {
             
             int idCommande;
             double prix;
-            Date dateAchat;
+            String dateAchat;
             int idClient;
             
             while (rs.next()) {
 
                 idCommande = rs.getInt("nocommande");
                 prix = rs.getDouble("prix");
-                dateAchat = rs.getDate("dateAchat");
+                dateAchat = rs.getString("dateAchat");
                 idClient = rs.getInt("clientid");
                 
                 singleCommande.clear();
@@ -238,5 +239,55 @@ public class CommandeOperations {
     
     }
     
+//________________cas utilisation clients avec tous les commandes________________
+    @GET
+    @Path("clientCommandes&{client}")
+    @Produces(javax.ws.rs.core.MediaType.APPLICATION_JSON)
+    public String ClientCommandes(@PathParam("client") int noclient) {
 
+        JSONArray mainJSON = new JSONArray();
+
+        try {
+            Connection cn = utils.DBOperation.connectionBd();
+
+            Statement stm = cn.createStatement();
+            String sql = "select * from commande where clientid="+noclient;
+	    
+	    //stm.setInt(4,noclient);
+			
+            ResultSet rs = stm.executeQuery(sql);
+
+            JSONObject cmd = new JSONObject();
+
+            int idClient;
+            int noCommande;
+            double prixCommande;
+            String dateAchat;
+
+            while (rs.next()) {
+
+                noCommande = rs.getInt("nocommande");
+                prixCommande = rs.getDouble("prix");
+                dateAchat = rs.getString("dateachat");
+                idClient = rs.getInt("clientid");
+
+                cmd.accumulate("ID client", idClient);
+                cmd.accumulate("No Commande", noCommande);
+                cmd.accumulate("Prix", prixCommande);
+                cmd.accumulate("Date achat", dateAchat);
+
+                mainJSON.add(cmd);
+                cmd.clear();
+
+            }
+            rs.close();
+            stm.close();
+            cn.close();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return mainJSON.toString();
+    }
+    
 }

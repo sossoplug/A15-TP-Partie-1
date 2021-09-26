@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package service.config;
 
 import java.sql.Connection;
@@ -19,11 +14,6 @@ import javax.ws.rs.PathParam;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-/**
- * REST Web Service
- *
- * @author adams
- */
 @Path("categorie")
 public class CategorieOperations {
 

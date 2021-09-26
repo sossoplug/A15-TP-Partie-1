@@ -20,6 +20,7 @@ public class ApplicationConfig extends javax.ws.rs.core.Application {
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
         resources.add(service.config.ArtisteOperations.class);
+        resources.add(service.config.CategorieOperations.class);
         resources.add(service.config.ClientsOperations.class);
         resources.add(service.config.CommandeOperations.class);
     }
