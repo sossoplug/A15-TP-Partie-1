@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package service.config;
 
 import java.sql.Connection;
@@ -21,12 +16,7 @@ import javax.ws.rs.PathParam;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-/**
- * REST Web Service
- *
- * @author mac
- */
-@Path("martin/clients")
+@Path("clients")
 public class ClientsOperations {
 
     @Context
@@ -43,7 +33,7 @@ public class ClientsOperations {
      * @return an instance of java.lang.String
      */
     @GET
-    @Path("select")
+    @Path("allClients")
     @Produces(javax.ws.rs.core.MediaType.APPLICATION_JSON)
     public String selectAllFromClients() {
         
@@ -85,7 +75,7 @@ public class ClientsOperations {
     }
     
     @GET
-    @Path("selectParam&{id}")
+    @Path("singleClient&{id}")
     @Produces(javax.ws.rs.core.MediaType.APPLICATION_JSON)
     public String selectSingleClient(@PathParam("id") int clientid){
         

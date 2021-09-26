@@ -1,11 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package service.config;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -22,37 +18,44 @@ import javax.ws.rs.core.MediaType;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-@Path("artiste")
-public class ArtisteOperations {
+@Path("commande")
+public class CommandeOperations {
 
     @Context
     private UriInfo context;
 
-    
-    public ArtisteOperations() {
+    /**
+     * Creates a new instance of CommandeOperations
+     */
+    public CommandeOperations() {
     }
 
-    //**************************insertion dans la table Artiste**********************************
+    /**
+     * Retrieves representation of an instance of service.config.CommandeOperations
+     * @return an instance of java.lang.String
+     */
+    
     @GET
-    @Path("insert&{id}&{biographie}")
+    @Path("insert&{id}&{prix}&{dateAchat}&{idClient}")
     @Produces(javax.ws.rs.core.MediaType.APPLICATION_JSON)
-    public String InsertArtiste(@PathParam("id") int artisteid,
-                                @PathParam("biographie") String biographie){
-        
-        
+    public String InsertCommande(@PathParam("id") int idCommande,
+                                @PathParam("prix") double prixCommande,
+                                @PathParam("dateAchat") Date dateCommande,
+                                @PathParam("idClient") int idClient){
         JSONObject reponse = new JSONObject();
         reponse.accumulate("Status", "Error");
         reponse.accumulate("Message", "Insertion échoué");
         reponse.clear();
         
-        
         try{
             Connection cn = utils.DBOperation.connectionBd();
             
-            String sql = "insert into artiste values (?,?) ";
+            String sql = "insert into commande values (?,?,?,?) ";
             PreparedStatement stm = cn.prepareStatement(sql);
-            stm.setInt(1,artisteid);
-            stm.setString(2,biographie);
+            stm.setInt(1,idCommande);
+            stm.setDouble(2,prixCommande);
+            stm.setDate(3, dateCommande);
+            stm.setInt(4, idClient);
             
             int rows = stm.executeUpdate();
             
@@ -64,20 +67,17 @@ public class ArtisteOperations {
             cn.close();
         }
         catch(SQLException e) {
-            ///TRAITEMENT
+            System.out.println(e.getMessage());
         }
         
         return reponse.toString();
-    
     }
-    //***********************modification de l'Artiste******************************
+    
     @GET
-    @Path("update&{id}&{biographie}")
+    @Path("update&{id}&{prix}")
     @Produces(javax.ws.rs.core.MediaType.APPLICATION_JSON)
-    public String updateArtiste(@PathParam("id") int artisteid,
-                                @PathParam("biographie") String biographie){
-        
-        
+    public String updateCommandes(@PathParam("id") int idCommande,
+            @PathParam("prix") double prixCommande){
         JSONObject reponse = new JSONObject();
         reponse.accumulate("Status", "Error");
         reponse.accumulate("Message", "Modification échoué");
@@ -87,10 +87,11 @@ public class ArtisteOperations {
         try{
             Connection cn = utils.DBOperation.connectionBd();
             
-            String sql = "update artiste set biographie = ? where artisteidutilisateur = ? ";
+            String sql = "update commande set prix = ? where nocommande = ? ";
             PreparedStatement stm = cn.prepareStatement(sql);
-            stm.setString(1,biographie);
-            stm.setInt(2,artisteid);
+            stm.setDouble(1, prixCommande);
+            stm.setInt(2, idCommande);
+            
             
             int rows = stm.executeUpdate();
             
@@ -102,43 +103,46 @@ public class ArtisteOperations {
             cn.close();
         }
         catch(SQLException e) {
-            ///TRAITEMENT
+            System.out.println(e.getMessage());
         }
         
         return reponse.toString();
-    
     }
     
-    //**************************Afficher la liste des Artiste*****************************
-     @GET
-    @Path("allArtiste")
-    @Produces(javax.ws.rs.core.MediaType.APPLICATION_JSON)
-    public String selectAllArtiste() {
-        
+    @GET
+    @Path("allOrders")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String selectAllCommandes() {
         JSONArray mainJSON = new JSONArray();
         
         try{
             Connection cn = utils.DBOperation.connectionBd();
             
             Statement stm = cn.createStatement();
-            String sql = "select * from artiste";
+            String sql = "select * from commande";
             ResultSet rs = stm.executeQuery(sql);
             
-            JSONObject art = new JSONObject();
+            JSONObject cmd = new JSONObject();
             
-            int idArtiste;
-            String biographie;
+            int idCommande;
+            double prixCommande ;
+            Date dateAchat;
+            int idClient;
             
             while (rs.next()) {
 
-                idArtiste = rs.getInt("artisteidutilisateur");
-                biographie = rs.getString("biographie");
+                idCommande = rs.getInt("nocommande");
+                prixCommande = rs.getDouble("prix");
+                dateAchat = rs.getDate("dateachat");
+                idClient = rs.getInt("clientid");
                 
-                art.accumulate("id", idArtiste);
-                art.accumulate("biographie", biographie);
+                cmd.accumulate("id", idCommande);
+                cmd.accumulate("prix", prixCommande);
+                cmd.accumulate("date", dateAchat);
+                cmd.accumulate("idClient", idClient);
                 
-                mainJSON.add(art);
-                art.clear();
+                mainJSON.add(cmd);
+                cmd.clear();
                 
             }
             rs.close();
@@ -146,42 +150,47 @@ public class ArtisteOperations {
             cn.close();
         }
         catch(SQLException e) {
-             ///TRAITEMENT
+            System.out.println(e.getMessage());
         }
         
         return mainJSON.toString();
     }
-    //************************Afficher un artiste par son ID**************************** 
+    
     @GET
-    @Path("singleArtiste&{id}")
+    @Path("singleCommande&{id}")
     @Produces(javax.ws.rs.core.MediaType.APPLICATION_JSON)
-    public String singleArtiste(@PathParam("id") int artisteid){
-        
-        JSONObject singleArtiste = new JSONObject();
-        singleArtiste.accumulate("Status", "Error");
-        singleArtiste.accumulate("Message", "Artiste inexistant");
+    public String selectSingleCommande(@PathParam("id") int commandeid){
+        JSONObject singleCommande = new JSONObject();
+        singleCommande.accumulate("Status", "Error");
+        singleCommande.accumulate("Message", "Artiste inexistant");
         
         try{
             Connection cn = utils.DBOperation.connectionBd();
             
-            String sql = "select * from artiste where artisteidutilisateur = ? ";
+            String sql = "select * from commande where nocommande = ? ";
             PreparedStatement stm = cn.prepareStatement(sql);
-            stm.setInt(1,artisteid);
+            stm.setInt(1,commandeid);
             
             ResultSet rs = stm.executeQuery();
             
             
-            int idArtiste;
-            String biographie;
+            int idCommande;
+            double prix;
+            Date dateAchat;
+            int idClient;
             
             while (rs.next()) {
 
-                idArtiste = rs.getInt("artisteidutilisateur");
-                biographie = rs.getString("biographie");
+                idCommande = rs.getInt("nocommande");
+                prix = rs.getDouble("prix");
+                dateAchat = rs.getDate("dateAchat");
+                idClient = rs.getInt("clientid");
                 
-                singleArtiste.clear();
-                singleArtiste.accumulate("id", idArtiste);
-                singleArtiste.accumulate("biographie", biographie);
+                singleCommande.clear();
+                singleCommande.accumulate("idCommande", idCommande);
+                singleCommande.accumulate("prix", prix);
+                singleCommande.accumulate("dateAchat", dateAchat);
+                singleCommande.accumulate("idClient", idClient);
                     
             }
             rs.close();
@@ -189,19 +198,16 @@ public class ArtisteOperations {
             cn.close();
         }
         catch(SQLException e) {
-            ///TRAITEMENT
+            System.out.println(e.getMessage());
         }
         
-        return singleArtiste.toString();
-        
-        
+        return singleCommande.toString();
     }
-    /// ******************Suprimer un Artiste****************************
+    
     @GET
     @Path("delete&{id}")
     @Produces(javax.ws.rs.core.MediaType.APPLICATION_JSON)
-    public String deleteIntoClients(@PathParam("id") int artisteid){
-    
+    public String deleteIntoCommandes(@PathParam("id") int commandeid){
         JSONObject reponse = new JSONObject();
         reponse.accumulate("Status", "Error");
         reponse.accumulate("Message", "Suppression échoué");
@@ -211,9 +217,9 @@ public class ArtisteOperations {
         try{
             Connection cn = utils.DBOperation.connectionBd();
             
-            String sql = "delete  from Artiste where artisteidutilisateur = ? ";
+            String sql = "delete  from commande where nocommande = ? ";
             PreparedStatement stm = cn.prepareStatement(sql);
-            stm.setInt(1,artisteid);
+            stm.setInt(1,commandeid);
             
             int rows = stm.executeUpdate();
             
@@ -225,14 +231,12 @@ public class ArtisteOperations {
             cn.close();
         }
         catch(SQLException e) {
-            ///TRAITEMENT
+            System.out.println(e.getMessage());
         }
         
         return reponse.toString();
     
     }
     
-    
-    
-    
+
 }
