@@ -6,6 +6,7 @@
 package service.config;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -232,6 +233,53 @@ public class ArtisteOperations {
     
     }
     
+    //************************** cas d'utilisation:Envoyer Message*****************
+    
+    @GET
+    @Path("envoyer&{idMessage}&{dateMsg}&{objetMsg}&{texte}&{sender}&{receiver}")
+    @Produces(javax.ws.rs.core.MediaType.APPLICATION_JSON)
+    public String envoyerMessage(@PathParam("idMessage") int idMsg,
+                                @PathParam("dateMsg") Date dateM,
+                                @PathParam("objetMsg") String objetM,
+                               @PathParam("texte") String txt,
+                               @PathParam("sender") int utiSender,
+                               @PathParam("receiver") int utiReceiver){
+        
+        
+        JSONObject reponse = new JSONObject();
+        reponse.accumulate("Status", "Error");
+        reponse.accumulate("Message", "Envoi échoué");
+        reponse.clear();
+        
+        
+        try{
+            Connection cn = utils.DBOperation.connectionBd();
+            
+            String sql = "insert into message values (?,?,?,?,?,?) ";
+            PreparedStatement stm = cn.prepareStatement(sql);
+            stm.setInt(1,idMsg);
+            stm.setDate(2,dateM);
+            stm.setString(3, objetM);
+            stm.setString(4, txt);
+            stm.setInt(5, utiSender);
+            stm.setInt(6,utiReceiver);
+            
+            int rows = stm.executeUpdate();
+            
+            if (rows > 0) {
+                reponse.accumulate("Status", "OK");
+                reponse.accumulate("Message", "Envoi réussi");
+            }
+            stm.close();
+            cn.close();
+        }
+        catch(SQLException e) {
+            ///TRAITEMENT
+        }
+        
+        return reponse.toString();
+    
+    }
     
     
     
