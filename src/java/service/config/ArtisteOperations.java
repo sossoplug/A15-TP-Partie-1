@@ -65,7 +65,7 @@ public class ArtisteOperations {
             cn.close();
         }
         catch(SQLException e) {
-            ///TRAITEMENT
+            System.out.println(e.getMessage());
         }
         
         return reponse.toString();
@@ -103,7 +103,7 @@ public class ArtisteOperations {
             cn.close();
         }
         catch(SQLException e) {
-            ///TRAITEMENT
+            System.out.println(e.getMessage());
         }
         
         return reponse.toString();
@@ -147,7 +147,7 @@ public class ArtisteOperations {
             cn.close();
         }
         catch(SQLException e) {
-             ///TRAITEMENT
+             System.out.println(e.getMessage());
         }
         
         return mainJSON.toString();
@@ -190,7 +190,7 @@ public class ArtisteOperations {
             cn.close();
         }
         catch(SQLException e) {
-            ///TRAITEMENT
+            System.out.println(e.getMessage());
         }
         
         return singleArtiste.toString();
@@ -226,7 +226,7 @@ public class ArtisteOperations {
             cn.close();
         }
         catch(SQLException e) {
-            ///TRAITEMENT
+            System.out.println(e.getMessage());
         }
         
         return reponse.toString();
@@ -274,7 +274,7 @@ public class ArtisteOperations {
             cn.close();
         }
         catch(SQLException e) {
-            ///TRAITEMENT
+            System.out.println(e.getMessage());
         }
         
         return reponse.toString();
